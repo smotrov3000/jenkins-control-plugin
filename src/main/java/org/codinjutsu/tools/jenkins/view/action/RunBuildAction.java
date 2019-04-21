@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 
 public class RunBuildAction extends AnAction implements DumbAware {
 
-    private static final Icon EXECUTE_ICON = GuiUtil.isUnderDarcula() ? GuiUtil.loadIcon("execute_dark.png") : GuiUtil.loadIcon("execute.png");
+    private static final Icon EXECUTE_ICON = GuiUtil.loadIcon("execute.svg");
     private static final Logger LOG = Logger.getLogger(RunBuildAction.class.getName());
     public static final int BUILD_STATUS_UPDATE_DELAY = 1;
 

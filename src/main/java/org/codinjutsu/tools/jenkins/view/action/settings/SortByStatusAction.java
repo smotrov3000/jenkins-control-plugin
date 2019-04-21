@@ -27,14 +27,14 @@ import javax.swing.*;
 
 public class SortByStatusAction extends ToggleAction implements DumbAware {
 
-    private static final Icon SORT_ICON = GuiUtil.loadIcon("arrow_up.png");
+    private static final Icon SORT_ICON = GuiUtil.loadIcon("arrow_up.svg");
 
     private final BrowserPanel browserPanel;
 
     private boolean sortedByStatus = false;
 
     public SortByStatusAction(BrowserPanel browserPanel) {
-        super("Sort by Build Status", "Fail, Unstable, Success, ...", SORT_ICON);
+        super("Sort by Build Status", "Toggle to sort by build status. Sorts by name when not toggled", SORT_ICON);
         this.browserPanel = browserPanel;
     }
 

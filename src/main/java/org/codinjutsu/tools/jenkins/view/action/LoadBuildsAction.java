@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class LoadBuildsAction extends AnAction implements DumbAware {
-    private static final Icon REFRESH_ICON = GuiUtil.loadIcon("builds.png");
+    private static final Icon REFRESH_ICON = GuiUtil.loadIcon("builds.svg");
 
     private final BrowserPanel browserPanel;
 
@@ -55,6 +55,6 @@ public class LoadBuildsAction extends AnAction implements DumbAware {
     @Override
     public void update(AnActionEvent event) {
         Job selectedJob = browserPanel.getSelectedJob();
-        event.getPresentation().setVisible(selectedJob != null);
+        event.getPresentation().setVisible(selectedJob != null && selectedJob.isBuildable());
     }
 }

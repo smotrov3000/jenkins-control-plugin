@@ -29,6 +29,8 @@ import org.codinjutsu.tools.jenkins.util.GuiUtil;
 public class Job {
 
     private static final Map<String, Icon> ICON_BY_JOB_HEALTH_MAP = new HashMap<>();
+
+    private String clazz;
     private String name;
 
     private String displayName;
@@ -76,7 +78,7 @@ public class Job {
 
 
     public Icon getStateIcon() {
-        return Build.getStateIcon(color);
+        return Build.getStateIcon(this);
     }
 
     public Icon getHealthIcon() {
@@ -105,6 +107,14 @@ public class Job {
 
     public void addParameter(String paramName, String paramType, String defaultValue, String... choices) {
         parameters.add(JobParameter.create(paramName, paramType, defaultValue, choices));
+    }
+
+    public String getClazz() {
+        return clazz;
+    }
+
+    public void setClazz(String clazz) {
+        this.clazz = clazz;
     }
 
     public void setName(String name) {
@@ -252,6 +262,11 @@ public class Job {
         public static Health createHealth(String healthLevel, String healthDescription) {
             return new Health(healthLevel, healthDescription);
         }
+    }
+
+    // TODO assign Folder its own class
+    public boolean isFolder() {
+        return "com.cloudbees.hudson.plugins.folder.Folder".equals(clazz);
     }
 
     @Override

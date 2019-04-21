@@ -1,4 +1,4 @@
-# Jenkins Plugin 0.10.0 for Jetbrains products
+# Jenkins Plugin 0.11.0 for Jetbrains products
 
 * [Jetbrains plugin page](https://plugins.jetbrains.com/idea/plugin/6110)
 * [Changelog](https://github.com/dboissier/jenkins-control-plugin/blob/master/CHANGELOG.txt)
@@ -10,12 +10,12 @@
 
 
 ## Description
-This plugin allows to view the content of your Jenkins Continous Integration Server.
+This (hopefully maintained version of) plugin allows to view the content of your Jenkins Continuous Integration Server.
 
 ![Browser](https://github.com/dboissier/jenkins-control-plugin/blob/master/doc/images/Browser.png?raw=true)
 
 ## Plugin Compatibility
-This plugin was built with JDK 1.7 for IDEA 14, 15 and with JDK 8 for IDEA 2016 versions. Jenkins CIs of jenkins-ci and apache.org are used for manual and stress testing.
+This plugin was built with JDK 1.7 for IDEA 14, 15 and with JDK 8 for IDEA 2016, 2018 versions. Jenkins CIs of jenkins-ci and apache.org are used for manual and stress testing.
 
 ## Installation steps
 Download this plugin from your IDE or [from the plugin website](http://plugins.jetbrains.com/plugin/6110).
@@ -99,7 +99,11 @@ Create a Gradle Run configuration with task `runIdea` and just run it.
 * This software is written under Apache License 2.0.
 * if Jenkins is behing an HTTPS web server, set a **trusted** certificate.
 
-## Thanks
+## Credits
+* Vorillaz for [Jenkins Headshot Icon](https://iconscout.com/icon/jenkins-2)
+* Original authors of this plugin
+
+## Original author's thanks
 I would like to thank:
 * All Github contributors who fixed the plugin for Jenkins 2 
 * [Cezary Butler](https://github.com/cezary-butler) and **Marcin Seroka** from [Programisci](http://programisci.eu/en/) for their contribution to fix and improve this plugin for Idea 14 and 15

@@ -27,7 +27,7 @@ public class RefreshRssAction extends AnAction implements DumbAware {
 
 
     public RefreshRssAction() {
-        super("Refresh last completed builds", "Refresh last completed builds from Jenkins server", GuiUtil.loadIcon("rss.png"));
+        super("Refresh last completed builds", "Refresh last completed builds from Jenkins server", GuiUtil.loadIcon("rss.svg"));
     }
 
 

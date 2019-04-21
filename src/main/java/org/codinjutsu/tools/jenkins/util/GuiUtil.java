@@ -26,6 +26,8 @@ import com.intellij.openapi.util.IconLoader;
 
 import javax.swing.*;
 import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class GuiUtil {
 
@@ -78,9 +80,6 @@ public class GuiUtil {
         return UIManager.getLookAndFeel().getName().contains("Darcula");
     }
 
-    public static URL getIconResource(String iconFilename) {
-        return GuiUtil.class.getResource(ICON_FOLDER + iconFilename);
-    }
 
     private static class TaskRunner implements Runnable{
         private final Task.Backgroundable task;

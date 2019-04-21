@@ -26,7 +26,7 @@ import javax.swing.*;
 
 public class RefreshNodeAction extends AnAction implements DumbAware {
 
-    private static final Icon REFRESH_ICON = GuiUtil.isUnderDarcula() ? GuiUtil.loadIcon("refresh_dark.png") : GuiUtil.loadIcon("refresh.png");
+    private static final Icon REFRESH_ICON = GuiUtil.loadIcon("refresh.svg");
     private final BrowserPanel browserPanel;
 
 

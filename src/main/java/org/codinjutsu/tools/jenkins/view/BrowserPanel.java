@@ -473,13 +473,7 @@ public class BrowserPanel extends SimpleToolWindowPanel implements Disposable {
         if (currentSelectedView != null) {
             return currentSelectedView;
         }
-
-        View primaryView = jenkins.getPrimaryView();
-        if (primaryView != null) {
-            return primaryView;
-        }
-
-        return null;
+        return jenkins.getPrimaryView();
     }
 
     private void fillBuildsTree(Job job, DefaultMutableTreeNode jobNode) {

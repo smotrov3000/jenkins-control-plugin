@@ -21,11 +21,8 @@ import com.intellij.openapi.project.ProjectManager;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.jenkins.JenkinsAppSettings;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.regex.Pattern;
 
 public class Jenkins {
 
@@ -46,8 +43,8 @@ public class Jenkins {
     public Jenkins(String description, String serverUrl) {
         this.name = description;
         this.serverUrl = serverUrl;
-        this.jobs = new LinkedList<Job>();
-        this.views = new LinkedList<View>();
+        this.jobs = new LinkedList<>();
+        this.views = new LinkedList<>();
         try {
             Project[] projects = ProjectManager.getInstance().getOpenProjects();
             if (projects.length > 0) {
@@ -62,7 +59,7 @@ public class Jenkins {
         if (!ignoreFilter && settings != null) {
             String filter = settings.getJobsFilterPattern();
             if (!filter.isEmpty()) {
-                LinkedList<Job> newJobs = new LinkedList<Job>();
+                LinkedList<Job> newJobs = new LinkedList<>();
                 for (Job job : jobs) {
                     if (job.getName().matches(filter)) {
                         newJobs.add(job);

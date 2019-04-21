@@ -37,7 +37,7 @@ public class BuildCurrentBranch extends AnAction implements DumbAware {
     private Project project;
 
     public BuildCurrentBranch(BrowserPanel browserPanel) {
-        super("Build current branch", "Build current branch", GuiUtil.loadIcon("execute.png"));
+        super("Build current branch", "Build current branch", GuiUtil.loadIcon("execute.svg"));
         this.browserPanel = browserPanel;
     }
 

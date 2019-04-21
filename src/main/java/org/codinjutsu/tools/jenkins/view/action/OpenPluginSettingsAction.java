@@ -30,7 +30,7 @@ import javax.swing.*;
 public class OpenPluginSettingsAction extends AnAction implements DumbAware {
 
 
-    private static final Icon SETTINGS_ICON = GuiUtil.isUnderDarcula() ? GuiUtil.loadIcon("settings_dark.png") : GuiUtil.loadIcon("settings.png");
+    private static final Icon SETTINGS_ICON = GuiUtil.loadIcon("settings.svg");
 
     public OpenPluginSettingsAction() {
         super("Jenkins Settings", "Edit the Jenkins settings for the current project", SETTINGS_ICON);

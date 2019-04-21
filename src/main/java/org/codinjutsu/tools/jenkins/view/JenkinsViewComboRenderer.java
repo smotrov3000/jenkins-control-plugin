@@ -33,6 +33,7 @@ public class JenkinsViewComboRenderer extends ColoredListCellRenderer {
 
         if (value instanceof View) {
             View view = (View) value;
+            setBorder(BorderFactory.createEmptyBorder(1, 3, 0, 3));
             append(view.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
 
             if (value instanceof FavoriteView) {

@@ -23,6 +23,7 @@ import org.codinjutsu.tools.jenkins.model.Job;
 import java.util.List;
 
 public interface JenkinsParser {
+    String CLASS = "_class";
     String JOBS = "jobs";
     String JOB_NAME = "name";
     String JOB_DISPLAY_NAME = "displayName";

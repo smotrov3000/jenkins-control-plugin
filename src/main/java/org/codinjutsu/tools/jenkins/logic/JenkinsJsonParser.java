@@ -63,7 +63,7 @@ public class JenkinsJsonParser implements JenkinsParser {
     }
 
     private List<View> getViews(JSONArray viewsObjects) {
-        List<View> views = new LinkedList<View>();
+        List<View> views = new LinkedList<>();
         for (Object obj : viewsObjects) {
             JSONObject viewObject = (JSONObject) obj;
             views.add(getView(viewObject));
@@ -77,12 +77,12 @@ public class JenkinsJsonParser implements JenkinsParser {
         view.setNested(false);
         String name = (String) viewObject.get(VIEW_NAME);
         if (name != null) {
-            view.setName(name.toString());
+            view.setName(name);
         }
 
         String url = (String) viewObject.get(VIEW_URL);
         if (name != null) {
-            view.setUrl(url.toString());
+            view.setUrl(url);
         }
 
         JSONArray subViewObjs = (JSONArray) viewObject.get(VIEWS);
@@ -199,6 +199,10 @@ public class JenkinsJsonParser implements JenkinsParser {
 
     private Job getJob(JSONObject jsonObject) {
         Job job = new Job();
+
+        String clazz = (String) jsonObject.get(CLASS);
+        job.setClazz(clazz);
+
         String name = (String) jsonObject.get(JOB_NAME);
         job.setName(name);
 
@@ -225,7 +229,7 @@ public class JenkinsJsonParser implements JenkinsParser {
     }
 
     private List<JobParameter> getParameters(JSONArray parameterProperties) {
-        List<JobParameter> jobParameters = new LinkedList<JobParameter>();
+        List<JobParameter> jobParameters = new LinkedList<>();
         if (parameterProperties == null || parameterProperties.isEmpty()) {
             return jobParameters;
         }
@@ -266,7 +270,7 @@ public class JenkinsJsonParser implements JenkinsParser {
     }
 
     private List<String> getChoices(JSONArray choiceObjs) {
-        List<String> choices = new LinkedList<String>();
+        List<String> choices = new LinkedList<>();
         if (choiceObjs == null || choiceObjs.isEmpty()) {
             return choices;
         }
@@ -316,7 +320,7 @@ public class JenkinsJsonParser implements JenkinsParser {
         JSONParser parser = new JSONParser();
 
         try {
-            List<Job> jobs = new LinkedList<Job>();
+            List<Job> jobs = new LinkedList<>();
             JSONObject jsonObject = (JSONObject) parser.parse(jsonData);
             JSONArray jobObjects = (JSONArray) jsonObject.get(JOBS);
             for (Object object : jobObjects) {
@@ -339,10 +343,10 @@ public class JenkinsJsonParser implements JenkinsParser {
         JSONParser parser = new JSONParser();
 
         try {
-            List<Job> jobs = new LinkedList<Job>();
+            List<Job> jobs = new LinkedList<>();
             JSONObject jsonObject = (JSONObject) parser.parse(jsonData);
             JSONArray viewObjs = (JSONArray) jsonObject.get(VIEWS);
-            if (viewObjs == null && viewObjs.isEmpty()) {
+            if (viewObjs == null || viewObjs.isEmpty()) {
                 return jobs;
             }
 
@@ -368,7 +372,7 @@ public class JenkinsJsonParser implements JenkinsParser {
 
     private void checkJsonDataAndThrowExceptionIfNecessary(String jsonData) {
         if (StringUtils.isEmpty(jsonData) || "{}".equals(jsonData)) {
-            String message = String.format("Empty JSON data!");
+            String message = "Empty JSON data!";
             LOG.error(message);
             throw new IllegalStateException(message);
         }

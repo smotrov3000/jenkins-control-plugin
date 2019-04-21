@@ -33,7 +33,7 @@ import javax.swing.*;
 
 public class JenkinsWindowManager {
 
-    private static final Icon JENKINS_ICON = GuiUtil.loadIcon("jenkins_logo.png");
+    private static final Icon JENKINS_ICON = GuiUtil.loadIcon("jenkins_logo.svg");
 
     public static final String JENKINS_BROWSER = "Jenkins";
     private final Project project;

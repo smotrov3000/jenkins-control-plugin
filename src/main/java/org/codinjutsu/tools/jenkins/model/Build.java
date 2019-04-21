@@ -85,16 +85,14 @@ public class Build {
     }
 
 
-    public static Icon getStateIcon(String jobColor) {
-        if (jobColor == null) {
-            // NB: This assumes the case of rendering a folder.
-            // TODO: handle the folder-case explicitly
+    public static Icon getStateIcon(Job job) {
+        if (job.isFolder()) {
             return ICON_BY_BUILD_STATUS_MAP.get(BuildStatusEnum.FOLDER);
         }
         BuildStatusEnum[] jobStates = BuildStatusEnum.values();
         for (BuildStatusEnum jobState : jobStates) {
             String stateName = jobState.getColor();
-            if (jobColor.startsWith(stateName)) {
+            if (job.getColor().startsWith(stateName)) {
                 return ICON_BY_BUILD_STATUS_MAP.get(jobState);
             }
         }
