@@ -80,17 +80,9 @@ public class SelectJobDialog extends JDialog {
 
         getRootPane().setDefaultButton(buttonOK);
 
-        buttonOK.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                onOK();
-            }
-        });
+        buttonOK.addActionListener(event -> onOK());
 
-        buttonCancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        });
+        buttonCancel.addActionListener(e -> onCancel());
 
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -101,11 +93,7 @@ public class SelectJobDialog extends JDialog {
         });
 
         // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
     private void fillJobList(List<Job> jobs) {
@@ -205,7 +193,7 @@ public class SelectJobDialog extends JDialog {
                                     throw new ConfigurationException(String.format("File \"%s\" not found", virtualFile.getPath()));
                                 }
                             } else {
-                                throw new ConfigurationException(String.format("Job \"%s\" should has parameter with name \"%s\"", selectedJob.getName(), UploadPatchToJob.PARAMETER_NAME));
+                                throw new ConfigurationException(String.format("Job \"%s\" should have parameter with name \"%s\"", selectedJob.getName(), UploadPatchToJob.PARAMETER_NAME));
                             }
                         } else {
                             throw new ConfigurationException(String.format("Job \"%s\" has no parameters", selectedJob.getName()));

@@ -30,12 +30,13 @@ import org.codinjutsu.tools.jenkins.util.GuiUtil;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JenkinsTreeRenderer extends ColoredTreeCellRenderer {
 
     public static final Icon FAVORITE_ICON = GuiUtil.loadIcon("star_tn.png");
-    public static final Icon SERVER_ICON = GuiUtil.loadIcon("server_wrench.png");
+    public static final Icon SERVER_ICON = GuiUtil.loadIcon("server_network.svg");
 
     private final List<JenkinsSettings.FavoriteJob> favoriteJobs;
 
@@ -61,11 +62,16 @@ public class JenkinsTreeRenderer extends ColoredTreeCellRenderer {
             append(buildLabel(job), getAttribute(job));
 
             setToolTipText(job.findHealthDescription());
-            if (isFavoriteJob(job)) {
-                setIcon(new CompositeIcon(job.getStateIcon(), job.getHealthIcon(), FAVORITE_ICON));
-            } else {
-                setIcon(new CompositeIcon(job.getStateIcon(), job.getHealthIcon()));
+            List<Icon> icons = new ArrayList<>(4);
+            icons.add(job.getStateIcon());
+            // TODO treat folders properly
+            if (!job.isFolder()) {
+                icons.add(job.getHealthIcon());
             }
+            if (isFavoriteJob(job)) {
+                icons.add(FAVORITE_ICON);
+            }
+            setIcon(new CompositeIcon(icons.toArray(new Icon[]{})));
         } else if (userObject instanceof Build) {
             Build build = (Build) node.getUserObject();
             append(buildLabel(build), SimpleTextAttributes.REGULAR_ITALIC_ATTRIBUTES);

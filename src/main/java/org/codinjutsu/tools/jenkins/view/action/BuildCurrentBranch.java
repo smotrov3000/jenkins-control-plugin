@@ -51,18 +51,10 @@ public class BuildCurrentBranch extends AnAction implements DumbAware {
 
                             @Override
                             public void onSuccess() {
-                                ExecutorService.getInstance(project).getExecutor().schedule(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        GuiUtil.runInSwingThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                final Job newJob = browserPanel.getJob(job.getName());
-                                                browserPanel.loadJob(newJob);
-                                            }
-                                        });
-                                    }
-                                }, BUILD_STATUS_UPDATE_DELAY, TimeUnit.SECONDS);
+                                ExecutorService.getInstance(project).getExecutor().schedule(() -> GuiUtil.runInSwingThread(() -> {
+                                    final Job newJob = browserPanel.getJob(job.getNavigableName());
+                                    browserPanel.loadJob(newJob);
+                                }), BUILD_STATUS_UPDATE_DELAY, TimeUnit.SECONDS);
 
                             }
 

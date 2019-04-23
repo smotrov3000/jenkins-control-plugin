@@ -16,19 +16,17 @@
 
 package org.codinjutsu.tools.jenkins.model;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.Icon;
-
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.jenkins.util.GuiUtil;
 
-public class Job {
+import javax.swing.*;
+import java.util.LinkedList;
+import java.util.List;
 
-    private static final Map<String, Icon> ICON_BY_JOB_HEALTH_MAP = new HashMap<>();
+public class FolderJob extends Job {
+
+    private static final Icon FOLDER_ICON = GuiUtil.loadIcon("folder.svg");
+    private static final Icon NULL_ICON = GuiUtil.loadIcon("null.png");
 
     private String clazz;
     private String name;
@@ -45,24 +43,17 @@ public class Job {
 
     private Build lastBuild;
 
+    private List<ShortJobDescription> shortJobDescriptions  = new LinkedList<>();
+    private List<Job> jobs = new LinkedList<>();
     private List<Build> lastBuilds = new LinkedList<>();
 
     private final List<JobParameter> parameters = new LinkedList<>();
 
-    static {
-        ICON_BY_JOB_HEALTH_MAP.put("health-00to19", GuiUtil.loadIcon("health-00to19.svg"));
-        ICON_BY_JOB_HEALTH_MAP.put("health-20to39", GuiUtil.loadIcon("health-20to39.svg"));
-        ICON_BY_JOB_HEALTH_MAP.put("health-40to59", GuiUtil.loadIcon("health-40to59.svg"));
-        ICON_BY_JOB_HEALTH_MAP.put("health-60to79", GuiUtil.loadIcon("health-60to79.svg"));
-        ICON_BY_JOB_HEALTH_MAP.put("health-80plus", GuiUtil.loadIcon("health-80plus.svg"));
-        ICON_BY_JOB_HEALTH_MAP.put("null", GuiUtil.loadIcon("null.png"));
+
+    public FolderJob() {
     }
 
-
-    public Job() {
-    }
-
-    private Job(String name, String displayName, String color, String url, Boolean inQueue, Boolean buildable) {
+    private FolderJob(String name, String displayName, String color, String url, Boolean inQueue, Boolean buildable) {
         this.name = name;
         this.displayName = displayName;
         this.color = color;
@@ -72,20 +63,17 @@ public class Job {
     }
 
 
-    public static Job createJob(String jobName, String displayName,  String jobColor, String jobUrl, String inQueue, String buildable) {
-        return new Job(jobName, displayName, jobColor, jobUrl, Boolean.valueOf(inQueue), Boolean.valueOf(buildable));
+    public static FolderJob createJob(String jobName, String displayName, String jobColor, String jobUrl, String inQueue, String buildable) {
+        return new FolderJob(jobName, displayName, jobColor, jobUrl, Boolean.valueOf(inQueue), Boolean.valueOf(buildable));
     }
 
 
     public Icon getStateIcon() {
-        return Build.getStateIcon(this);
+        return FOLDER_ICON;
     }
 
     public Icon getHealthIcon() {
-        if (health == null) {
-            return ICON_BY_JOB_HEALTH_MAP.get("null");
-        }
-        return ICON_BY_JOB_HEALTH_MAP.get(health.getLevel());
+        return NULL_ICON;
     }
 
     public String findHealthDescription() {
@@ -96,7 +84,7 @@ public class Job {
     }
 
 
-    public void updateContentWith(Job updatedJob) {
+    public void updateContentWith(FolderJob updatedJob) {
         this.color = updatedJob.getColor();
         this.health = updatedJob.getHealth();
         this.inQueue = updatedJob.isInQueue();
@@ -121,15 +109,15 @@ public class Job {
         this.name = name;
     }
 
-    public String getNavigableName() {
-        return name;
-    }
-
     public String getName() {
         if (StringUtils.isEmpty(displayName)) {
             return name;
         }
         return displayName;
+    }
+
+    public String getNavigableName() {
+        return name;
     }
 
     public void setDisplayName(String displayName) {
@@ -204,6 +192,21 @@ public class Job {
         return fetchBuild;
     }
 
+    public List<ShortJobDescription> getShortJobDescriptions() {
+        return shortJobDescriptions;
+    }
+
+    public void setShortJobDescriptions(List<ShortJobDescription> shortJobDescriptions) {
+        this.shortJobDescriptions = shortJobDescriptions;
+    }
+
+    public List<Job> getJobs() {
+        return jobs;
+    }
+
+    public void setJobs(List<Job> jobs) {
+        this.jobs = jobs;
+    }
 
     public List<JobParameter> getParameters() {
         return parameters;
@@ -234,42 +237,9 @@ public class Job {
         parameters.addAll(jobParameters);
     }
 
-    public static class Health {
-
-        private String healthLevel;
-        private String description;
-
-        public Health() {
-        }
-
-        private Health(String healthLevel, String description) {
-            this.healthLevel = healthLevel;
-            this.description = description;
-        }
-
-        public String getLevel() {
-            return healthLevel;
-        }
-
-        public void setLevel(String healthLevel) {
-            this.healthLevel = healthLevel;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-
-        public static Health createHealth(String healthLevel, String healthDescription) {
-            return new Health(healthLevel, healthDescription);
-        }
-    }
-
+    // TODO assign Folder its own class
     public boolean isFolder() {
-        return false;
+        return "com.cloudbees.hudson.plugins.folder.Folder".equals(clazz);
     }
 
     @Override

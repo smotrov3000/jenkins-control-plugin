@@ -31,7 +31,7 @@ public class LoadBuildsAction extends AnAction implements DumbAware {
 
         try {
             final Job job = browserPanel.getSelectedJob();
-            new Task.Backgroundable(project, "Load builds", false) {
+            new Task.Backgroundable(project, "Load Builds", false) {
 
                 @Override
                 public void onSuccess() {

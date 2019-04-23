@@ -29,13 +29,14 @@ import java.util.Map;
 
 public class UrlBuilder {
 
+    private static final String API_JSON_NO_SLASH = "api/json";
     private static final String API_JSON = "/api/json";
     private static final String BUILD = "/build";
     private static final String PARAMETERIZED_BUILD = "/buildWithParameters";
     private static final String RSS_LATEST = "/rssLatest";
     private static final String TREE_PARAM = "?tree=";
     private static final String BASIC_JENKINS_INFO = "nodeName,nodeDescription,primaryView[name,url],views[name,url,views[name,url]]";
-    private static final String BASIC_JOB_INFO = "name,displayName,url,color,buildable,inQueue,healthReport[description,iconUrl],lastBuild[id,url,building,result,number,timestamp,duration],property[parameterDefinitions[name,type,defaultParameterValue[value],choices]]";
+    private static final String BASIC_JOB_INFO = "name,jobs[url,name],displayName,url,color,buildable,inQueue,healthReport[description,iconUrl],lastBuild[id,url,building,result,number,timestamp,duration],property[parameterDefinitions[name,type,defaultParameterValue[value],choices]]";
     private static final String BASIC_VIEW_INFO = "name,url,jobs[" + BASIC_JOB_INFO + "]";
     private static final String CLOUDBEES_VIEW_INFO = "name,url,views[jobs[" + BASIC_JOB_INFO + "]]";
     private static final String TEST_CONNECTION_REQUEST = "?tree=nodeName";
@@ -104,7 +105,20 @@ public class UrlBuilder {
 
     public URL createJobUrl(String jobUrl) {
         try {
-            return new URL(jobUrl + URIUtil.encodePathQuery(API_JSON + TREE_PARAM + BASIC_JOB_INFO));
+            String jobUrlWithoutSlash = jobUrl;
+            if (jobUrl.endsWith("/")) {
+                jobUrlWithoutSlash = jobUrl.substring(0, jobUrl.length() - 1);
+            }
+            return new URL(jobUrlWithoutSlash + URIUtil.encodePathQuery(API_JSON + TREE_PARAM + BASIC_JOB_INFO));
+        } catch (Exception ex) {
+            handleException(ex);
+        }
+        return null;
+    }
+
+    public URL createAllParamsJobUrl(String jobUrl) {
+        try {
+            return new URL(jobUrl + URIUtil.encodePathQuery(API_JSON_NO_SLASH));
         } catch (Exception ex) {
             handleException(ex);
         }

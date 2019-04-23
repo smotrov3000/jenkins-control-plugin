@@ -198,9 +198,16 @@ public class JenkinsJsonParser implements JenkinsParser {
     }
 
     private Job getJob(JSONObject jsonObject) {
-        Job job = new Job();
-
         String clazz = (String) jsonObject.get(CLASS);
+        Job job;
+        if ("com.cloudbees.hudson.plugins.folder.Folder".equals(clazz)) {
+            FolderJob folderJob = new FolderJob();
+            folderJob.getJobs().addAll(getShortJobDescriptions(folderJob.getName(), (JSONArray) jsonObject.get("jobs")));
+            job = folderJob;
+        } else {
+            job = new Job();
+        }
+
         job.setClazz(clazz);
 
         String name = (String) jsonObject.get(JOB_NAME);
@@ -226,6 +233,26 @@ public class JenkinsJsonParser implements JenkinsParser {
         JSONArray parameterProperty = (JSONArray) jsonObject.get(PARAMETER_PROPERTY);
         job.addParameters(getParameters(parameterProperty));
         return job;
+    }
+
+    private List<Job> getShortJobDescriptions(String folderName, JSONArray shortJobDescriptions) {
+        String folderPrefix = folderName + "/";
+        List<Job> jobDescriptions = new LinkedList<>();
+        if (shortJobDescriptions == null || shortJobDescriptions.isEmpty()) {
+            return jobDescriptions;
+        }
+        for (Object object : shortJobDescriptions) {
+            JSONObject description = (JSONObject) object;
+            if (description == null || description.isEmpty()) {
+                continue;
+            }
+            Job jobDescription = new Job();
+            jobDescription.setClazz((String) description.get("_class"));
+            jobDescription.setName(folderPrefix + description.get("name"));
+            jobDescription.setUrl((String) description.get("url"));
+            jobDescriptions.add(jobDescription);
+        }
+        return jobDescriptions;
     }
 
     private List<JobParameter> getParameters(JSONArray parameterProperties) {

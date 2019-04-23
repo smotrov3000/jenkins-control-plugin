@@ -17,9 +17,7 @@
 package org.codinjutsu.tools.jenkins.view;
 
 import java.awt.BorderLayout;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -42,12 +40,7 @@ import org.codinjutsu.tools.jenkins.logic.BuildStatusVisitor;
 import org.codinjutsu.tools.jenkins.logic.ExecutorService;
 import org.codinjutsu.tools.jenkins.logic.JenkinsLoadingTaskOption;
 import org.codinjutsu.tools.jenkins.logic.RequestManager;
-import org.codinjutsu.tools.jenkins.model.Build;
-import org.codinjutsu.tools.jenkins.model.BuildStatusEnum;
-import org.codinjutsu.tools.jenkins.model.FavoriteView;
-import org.codinjutsu.tools.jenkins.model.Jenkins;
-import org.codinjutsu.tools.jenkins.model.Job;
-import org.codinjutsu.tools.jenkins.model.View;
+import org.codinjutsu.tools.jenkins.model.*;
 import org.codinjutsu.tools.jenkins.util.GuiUtil;
 import org.codinjutsu.tools.jenkins.view.action.*;
 import org.codinjutsu.tools.jenkins.view.action.settings.SortByStatusAction;
@@ -189,11 +182,14 @@ public class BrowserPanel extends SimpleToolWindowPanel implements Disposable {
 
     public Job getJob(String name) {
         List<Job> jobs = jenkins.getJobs();
-        if (!jobs.isEmpty()) {
-            for (Job job : jobs) {
-                if (job.getName().equals(name)) {
-                    return job;
-                }
+        Queue<Job> jobQueue = new ArrayDeque<>(jobs);
+        while (!jobQueue.isEmpty()) {
+            Job nextJob = jobQueue.poll();
+            if (nextJob.getNavigableName().equals(name)) {
+                return nextJob;
+            }
+            if (nextJob.isFolder()) {
+                jobQueue.addAll(((FolderJob)nextJob).getJobs());
             }
         }
         return null;
@@ -299,15 +295,21 @@ public class BrowserPanel extends SimpleToolWindowPanel implements Disposable {
     private void updateJobNode(Job job) {
         final DefaultTreeModel model = (DefaultTreeModel) jobTree.getModel();
         final Object modelRoot = model.getRoot();
-        final int childCount = model.getChildCount(modelRoot);
+        updateJobRecursively(job, model, modelRoot);
+    }
+
+    private void updateJobRecursively(Job job, DefaultTreeModel model, Object currentNode) {
+        final int childCount = model.getChildCount(currentNode);
         for (int i = 0; i < childCount; ++i) {
-            Object child = model.getChild(modelRoot, i);
+            Object child = model.getChild(currentNode, i);
             if (child instanceof DefaultMutableTreeNode) {
                 DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) child;
                 if (childNode.getUserObject() == job) {
                     model.nodeChanged(childNode);
                     fillBuildsTree(job, childNode);
                     break;
+                } else {
+                    updateJobRecursively(job, model, child);
                 }
             }
         }
@@ -497,6 +499,9 @@ public class BrowserPanel extends SimpleToolWindowPanel implements Disposable {
 
         for (Job job : jobList) {
             DefaultMutableTreeNode jobNode = new DefaultMutableTreeNode(job);
+            if (job.isFolder()) {
+                fillFolder(jobNode, (FolderJob)job, buildStatusVisitor);
+            }
             if (job.isFetchBuild()) {
                 fillBuildsTree(job, jobNode);
             }
@@ -509,6 +514,20 @@ public class BrowserPanel extends SimpleToolWindowPanel implements Disposable {
         setSortedByStatus(sortedByBuildStatus);
 
         jobTree.setRootVisible(true);
+    }
+
+    private void fillFolder(DefaultMutableTreeNode jobNode, FolderJob folder, BuildStatusVisitor buildStatusVisitor) {
+        for (Job nestedJob : folder.getJobs()) {
+            DefaultMutableTreeNode nestedJobNode = new DefaultMutableTreeNode(nestedJob);
+            if (nestedJob.isFolder()) {
+                fillFolder(nestedJobNode, (FolderJob) nestedJob, buildStatusVisitor);
+            }
+            if (nestedJob.isFetchBuild()) {
+                fillBuildsTree(nestedJob, jobNode);
+            }
+            jobNode.add(nestedJobNode);
+            visit(nestedJob, buildStatusVisitor);
+        }
     }
 
     public void setAsFavorite(final List<Job> jobs) {

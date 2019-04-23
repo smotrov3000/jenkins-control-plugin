@@ -20,6 +20,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.offbytwo.jenkins.JenkinsServer;
+import com.offbytwo.jenkins.model.JobWithDetails;
 import com.offbytwo.jenkins.model.TestChildReport;
 import com.offbytwo.jenkins.model.TestResult;
 import org.apache.commons.lang.StringUtils;
@@ -27,10 +28,7 @@ import org.apache.log4j.Logger;
 import org.codinjutsu.tools.jenkins.JenkinsAppSettings;
 import org.codinjutsu.tools.jenkins.JenkinsSettings;
 import org.codinjutsu.tools.jenkins.exception.ConfigurationException;
-import org.codinjutsu.tools.jenkins.model.Build;
-import org.codinjutsu.tools.jenkins.model.Jenkins;
-import org.codinjutsu.tools.jenkins.model.Job;
-import org.codinjutsu.tools.jenkins.model.View;
+import org.codinjutsu.tools.jenkins.model.*;
 import org.codinjutsu.tools.jenkins.security.JenkinsVersion;
 import org.codinjutsu.tools.jenkins.security.SecurityClient;
 import org.codinjutsu.tools.jenkins.security.SecurityClientFactory;
@@ -127,11 +125,32 @@ public class RequestManager implements RequestManagerInterface {
         if (handleNotYetLoggedInState()) return Collections.emptyList();
         URL url = urlBuilder.createViewUrl(jenkinsPlateform, viewUrl);
         String jenkinsViewData = securityClient.execute(url);
+        List<Job> jobs;
         if (jenkinsPlateform.equals(JenkinsPlateform.CLASSIC)) {
-            return jsonParser.createViewJobs(jenkinsViewData);
+            jobs = jsonParser.createViewJobs(jenkinsViewData);
         } else {
-            return jsonParser.createCloudbeesViewJobs(jenkinsViewData);
+            jobs = jsonParser.createCloudbeesViewJobs(jenkinsViewData);
         }
+        jobs.forEach(job -> fillUpFolderJobs(job.getName() + "/", job));
+        return jobs;
+    }
+
+    private void fillUpFolderJobs(String namePrefix, Job job) {
+        if (!job.isFolder()) {
+            return;
+        }
+        List<Job> newJobs = ((FolderJob) job).getJobs()
+                .stream()
+                .map(childJob -> {
+                    Job childJobNew = jsonParser.createJob(securityClient.execute(urlBuilder.createJobUrl(childJob.getUrl())));
+                    if (childJobNew.isFolder()) {
+                        fillUpFolderJobs(namePrefix + job.getName() + "/", childJobNew);
+                    }
+                    childJobNew.setName(namePrefix + childJobNew.getName());
+                    return childJobNew;
+                })
+                .collect(Collectors.toList());
+        ((FolderJob) job).setJobs(newJobs);
     }
 
     private boolean handleNotYetLoggedInState() {
@@ -155,7 +174,8 @@ public class RequestManager implements RequestManagerInterface {
         if (handleNotYetLoggedInState()) return null;
         URL url = urlBuilder.createJobUrl(jenkinsJobUrl);
         String jenkinsJobData = securityClient.execute(url);
-        return jsonParser.createJob(jenkinsJobData);
+        Job job = jsonParser.createJob(jenkinsJobData);
+        return job;
     }
 
     private void stopBuild(String jenkinsBuildUrl) {
@@ -270,7 +290,14 @@ public class RequestManager implements RequestManagerInterface {
     @Override
     public String loadConsoleTextFor(Job job) {
         try {
-            return jenkinsServer.getJob(job.getName()).getLastCompletedBuild().details().getConsoleOutputText();
+            String[] jobPathParts = job.getNavigableName().split("/");
+            JobWithDetails currentJob = null;
+            com.offbytwo.jenkins.model.FolderJob currentFolder = null;
+            for (String pathPart : jobPathParts) {
+                currentJob = jenkinsServer.getJob(currentFolder, pathPart);
+                currentFolder = jenkinsServer.getFolderJob(currentJob).orNull();
+            }
+            return Objects.requireNonNull(currentJob).getLastCompletedBuild().details().getConsoleOutputText();
         } catch (IOException e) {
             logger.warn("cannot load log for " + job.getName());
             return null;
