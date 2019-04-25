@@ -3,7 +3,7 @@
 * [Changelog](https://github.com/smotrov3000/jenkins-control-plugin/blob/feature/material-redesign/CHANGELOG.txt)
 
 ### Current builds
-* [Idea 2018.2 (highly experimental)](https://github.com/smotrov3000/jenkins-control-plugin/raw/feature/material-redesign/snapshot/jenkins-control-plugin-2018_2.jar)
+* [Idea 2019.1 (highly experimental)](https://github.com/smotrov3000/jenkins-control-plugin/raw/feature/material-redesign/snapshot/jenkins-control-plugin-2019_1.zip)
 
 
 ## Description
@@ -12,7 +12,7 @@ This (hopefully maintained version of) plugin allows to view the content of your
 ![Browser](https://github.com/smotrov3000/jenkins-control-plugin/blob/master/doc/images/Browser.png?raw=true)
 
 ## Plugin Compatibility
-This plugin was built JDK 8 for IDEA 2018.2 version (older versions are out of the scope). Jenkins CIs of jenkins-ci and apache.org are used for manual and stress testing.
+This plugin was built JDK 8 for IDEA 2019.1 version (older versions are out of the scope, at least, for now). Jenkins CIs of jenkins-ci and apache.org are used for manual and stress testing.
 
 ## Installation steps
 Download and install experimental JAR from "snapshot" folder. No easy way to install while plugin is in the experimental state. 
